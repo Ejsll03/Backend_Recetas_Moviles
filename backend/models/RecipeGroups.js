@@ -10,3 +10,5 @@ const recipeGroupSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+export default mongoose.model("RecipeGroup", recipeGroupSchema);

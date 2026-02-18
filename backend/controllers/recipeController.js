@@ -96,3 +96,14 @@ export async function deleteRecipe(req, res) {
     res.status(400).json({ error: err.message });
   }
 }
+
+export async function listPublicRecipes(req, res) {
+  try {
+    const recipes = await Recipe.find({ publico: true })
+      .sort({ createdAt: -1 })
+      .populate("user", "username");
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
