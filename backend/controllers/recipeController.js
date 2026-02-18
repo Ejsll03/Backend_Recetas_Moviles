@@ -1,4 +1,5 @@
 import Recipe from "../models/Recipe.js";
+import User from "../models/User.js";
 
 export async function listRecipes(req, res) {
   try {
@@ -103,6 +104,51 @@ export async function listPublicRecipes(req, res) {
       .sort({ createdAt: -1 })
       .populate("user", "username");
     res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function toggleFavorite(req, res) {
+  try {
+    const userId = req.session.userId;
+    const { id } = req.params; // id de la receta
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+    const index = user.favorites?.findIndex(
+      (favId) => favId.toString() === id
+    );
+
+    let isFavorite;
+    if (index === -1 || index === undefined) {
+      user.favorites = user.favorites || [];
+      user.favorites.push(id);
+      isFavorite = true;
+    } else {
+      user.favorites.splice(index, 1);
+      isFavorite = false;
+    }
+
+    await user.save();
+    res.json({ isFavorite });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
+export async function listFavoriteRecipes(req, res) {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).populate({
+      path: "favorites",
+      populate: { path: "user", select: "username" },
+    });
+
+    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+    res.json(user.favorites || []);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

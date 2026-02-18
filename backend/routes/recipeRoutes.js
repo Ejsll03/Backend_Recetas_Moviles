@@ -7,6 +7,8 @@ import {
   updateRecipe,
   deleteRecipe,
   listPublicRecipes,
+  toggleFavorite,
+  listFavoriteRecipes,
 } from "../controllers/recipeController.js";
 
 const router = express.Router();
@@ -16,9 +18,11 @@ router.use(requireAuth);
 
 router.get("/", listRecipes);
 router.get("/public", listPublicRecipes);
+router.get("/favorites", listFavoriteRecipes);
 router.get("/:id", getRecipe);
 router.post("/", createRecipe);
 router.put("/:id", updateRecipe);
 router.delete("/:id", deleteRecipe);
+router.post("/:id/favorite", toggleFavorite);
 
 export default router;
