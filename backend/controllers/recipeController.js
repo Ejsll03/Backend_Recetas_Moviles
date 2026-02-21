@@ -8,7 +8,9 @@ function escapeRegex(str) {
 export async function listRecipes(req, res) {
   try {
     const userId = req.session.userId;
-    const recipes = await Recipe.find({ user: userId }).sort({ createdAt: -1 });
+    const recipes = await Recipe.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .populate("groups", "name");
     res.json(recipes);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -43,8 +45,6 @@ export async function createRecipe(req, res) {
       return res.status(400).json({ error: "El título es requerido" });
 
     const normalizedTitle = title.trim();
-
-    // Verificar si ya existe una receta del mismo usuario con el mismo título (sin distinguir mayúsculas/minúsculas)
     const existing = await Recipe.findOne({
       user: userId,
       title: { $regex: new RegExp(`^${escapeRegex(normalizedTitle)}$`, "i") },
@@ -78,7 +78,6 @@ export async function updateRecipe(req, res) {
     const userId = req.session.userId;
     const { id } = req.params;
     const update = req.body;
-    // Solo permitir campos válidos
     const allowedFields = [
       "title",
       "description",
@@ -149,7 +148,7 @@ export async function listPublicRecipes(req, res) {
 export async function toggleFavorite(req, res) {
   try {
     const userId = req.session.userId;
-    const { id } = req.params; // id de la receta
+    const { id } = req.params;
 
     const user = await User.findById(userId);
     if (!user) return res.status(401).json({ error: "Usuario no encontrado" });

@@ -34,21 +34,21 @@ export const login = async (req, res) => {
 
     // Validar que se envíen username y contraseña
     if (!username || !password) {
-      console.log("❌ Error: Username o contraseña faltantes");
+      console.log("Error: Username o contraseña faltantes");
       return res.status(400).json({ error: "Username y contraseña son requeridos" });
     }
 
     // Buscar usuario en la base de datos por username
     const user = await User.findOne({ username });
     if (!user) {
-      console.log("❌ Error: Usuario no encontrado:", username);
+      console.log("Error: Usuario no encontrado:", username);
       return res.status(400).json({ error: "Usuario no encontrado" });
     }
 
     // Verificar contraseña
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      console.log("❌ Error: Contraseña incorrecta para usuario:", username);
+      console.log("Error: Contraseña incorrecta para usuario:", username);
       return res.status(400).json({ error: "Contraseña incorrecta" });
     }
 
@@ -59,9 +59,9 @@ export const login = async (req, res) => {
     req.session.isAuthenticated = true;
     req.session.loginTime = new Date().toISOString();
 
-    console.log("✅ Login exitoso para usuario:", username);
-    console.log("🔐 Sesión creada:", req.sessionID);
-    console.log("💾 Sesión guardada en MongoDB");
+    console.log("Login exitoso para usuario:", username);
+    console.log("Sesión creada:", req.sessionID);
+    console.log("Sesión guardada en MongoDB");
     
     res.json({ 
       message: "Login exitoso",
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
       sessionID: req.sessionID
     });
   } catch (err) {
-    console.error("❌ Error en login:", err);
+    console.error("Error en login:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
@@ -84,12 +84,12 @@ export const logout = (req, res) => {
   
   req.session.destroy((err) => {
     if (err) {
-      console.error("❌ Error al cerrar sesión:", err);
+      console.error("Error al cerrar sesión:", err);
       return res.status(500).json({ error: "Error al cerrar sesión" });
     }
     
     res.clearCookie('connect.sid');
-    console.log("✅ Logout exitoso para usuario:", username);
+    console.log("Logout exitoso para usuario:", username);
     res.json({ message: "Logout exitoso" });
   });
 };
@@ -124,21 +124,21 @@ export const resetPassword = async (req, res) => {
     // Buscar usuario por email
     const user = await User.findOne({ email });
     if (!user) {
-      console.log("❌ Email no encontrado:", email);
+      console.log("Email no encontrado:", email);
       // Por seguridad, no revelamos si el email existe o no
       return res.json({ 
         message: "Si el email existe, se han enviado las instrucciones" 
       });
     }
 
-    console.log("📧 Instrucciones de reset enviadas a:", email);
+    console.log("Instrucciones de reset enviadas a:", email);
     
     res.json({ 
       message: "Si el email existe, se han enviado las instrucciones",
       email: email // Solo para desarrollo, en producción quitar
     });
   } catch (err) {
-    console.error("❌ Error en reset password:", err);
+    console.error("Error en reset password:", err);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
@@ -202,7 +202,7 @@ export const debugSessions = async (req, res) => {
     // Obtener todas las sesiones
     sessionStore.all((error, sessions) => {
       if (error) {
-        console.error("❌ Error obteniendo sesiones:", error);
+        console.error("Error obteniendo sesiones:", error);
         return res.status(500).json({ error: "Error obteniendo sesiones" });
       }
       
@@ -229,7 +229,7 @@ export const debugSessions = async (req, res) => {
       });
     });
   } catch (error) {
-    console.error("❌ Error en debugSessions:", error);
+    console.error("Error en debugSessions:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
@@ -274,7 +274,7 @@ export const getProfile = async (req, res) => {
 
     res.json({ user });
   } catch (error) {
-    console.error("❌ Error al obtener perfil:", error);
+    console.error("Error al obtener perfil:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
@@ -314,7 +314,7 @@ export const updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("❌ Error al actualizar perfil:", error);
+    console.error("Error al actualizar perfil:", error);
 
     // Manejar errores de unicidad (username/email duplicados)
     if (error.code === 11000) {
@@ -347,7 +347,7 @@ export const deleteAccount = async (req, res) => {
 
     req.session.destroy((err) => {
       if (err) {
-        console.error("❌ Error al eliminar sesión tras borrar cuenta:", err);
+        console.error("Error al eliminar sesión tras borrar cuenta:", err);
         return res
           .status(500)
           .json({ error: "Cuenta eliminada, pero error al cerrar sesión" });
@@ -358,7 +358,7 @@ export const deleteAccount = async (req, res) => {
       res.json({ message: "Cuenta eliminada correctamente" });
     });
   } catch (error) {
-    console.error("❌ Error al eliminar cuenta:", error);
+    console.error("Error al eliminar cuenta:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };

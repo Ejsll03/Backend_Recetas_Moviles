@@ -10,6 +10,7 @@ const recipeSchema = new mongoose.Schema(
     pasos: { type: [String], default: [] },
     comentarios: { type: String, default: "" },
     publico: { type: Boolean, default: false },
+    groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeGroup" }],
   },
   { timestamps: true }
 );

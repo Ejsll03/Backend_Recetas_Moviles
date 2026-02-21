@@ -7,6 +7,7 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import authRoutes from "./routes/authRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
+import recipeGroupRoutes from "./routes/recipeGroupRoutes.js";
 import User from "./models/User.js";
 import bcrypt from "bcrypt";
 
@@ -55,6 +56,7 @@ app.use((req, res, next) => {
 // Rutas
 app.use("/auth", authRoutes);
 app.use("/recipes", recipeRoutes);
+app.use("/api/recipe-groups", recipeGroupRoutes);
 // Servir archivos estáticos de uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
