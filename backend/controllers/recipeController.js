@@ -40,6 +40,7 @@ export async function createRecipe(req, res) {
       pasos = [],
       comentarios = "",
       publico = false,
+      image = "",
     } = req.body;
     if (!title)
       return res.status(400).json({ error: "El título es requerido" });
@@ -65,6 +66,7 @@ export async function createRecipe(req, res) {
       pasos,
       comentarios,
       publico,
+      image,
     });
     await recipe.save();
     res.status(201).json(recipe);
@@ -86,6 +88,7 @@ export async function updateRecipe(req, res) {
       "pasos",
       "comentarios",
       "publico",
+      "image",
     ];
     const filteredUpdate = {};
     for (const key of allowedFields) {
